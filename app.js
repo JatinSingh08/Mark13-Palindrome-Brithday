@@ -65,12 +65,12 @@ function isLeapYear(year) {
   }
   return false;
 }
+var daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
 function getNextDate(date) {
   var day = date.day + 1;
   var month = date.month;
   var year = date.year;
 
-  var daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
 
   if(month === 2){
     if(isLeapYear(year)){
@@ -109,7 +109,35 @@ function getPrevDate(date) {
   var month = date.month;
   var year = date.year;
 
-
+  if(month === 3) {
+    if(isLeapYear(year)) {
+      if(day < 1){
+        day = 29;
+        month--;
+      }
+    } else {
+      if(day < 1) {
+        day = 28;
+        month--;
+      }
+    }
+  } else {
+    if(month === 1 && day<1){
+      day = 31;
+      month = 12;
+      year--;
+    }
+    if(month > 1 && day < 1){
+      day = daysInMonth[month - 2];
+      month--;
+    }
+  }
+  return {
+    day: day,
+    month: month,
+    year: year
+  }
+  
 }
 
 function getNextPalindromeDate(date) {
@@ -128,6 +156,20 @@ function getNextPalindromeDate(date) {
   return [count, nextDate];
 
 }
+function getPreviousPalindromeDate(date) {
+  var previousDate = getPrevDate(date);
+  let counter = 0;
+  while(1) {
+    counter++;
+    var isPalindrome = checkPalindromeForAllFormats(previousDate);
+    if(isPalindrome) {
+      break;
+    }
+    previousDate = getPrevDate(previousDate);
+  }
+  return [counter, previousDate];
+}
+
 var date = {
   day: 11,
   month: 09,
@@ -137,8 +179,8 @@ var date = {
 console.log(getNextPalindromeDate(date));
 
 var dateInput = document.querySelector('#bday-input');
-var showBtn = document.querySelector('#show-btn');
-var result = document.querySelector('#result')
+var showBtn = document.querySelector('.show-btn');
+var result = document.querySelector('.result')
 
 showBtn.addEventListener('click',(e) => {
   console.log(dateInput.value);
@@ -161,9 +203,13 @@ function clickHandler(e) {
       result.innerText = 'Yay! your birthday is a palindrome! ✨🥳'
     }
     else {
-      var [count, nextDate] = getNextPalindromeDate(date);
-      result.innerText = `oops! You just missed by ${count} days, 
-      the next palindrome date is ${nextDate.day}-${nextDate.month}-${nextDate.year} 🥲☹️`
+      var [countNext, nextDate] = getNextPalindromeDate(date);
+      var [countPrev, prevDate] = getPreviousPalindromeDate(date);
+      result.innerHTML = `<li>No, your birthday is <span>Not</span> a Palindrome.🥲☹️</li><br> 
+      <li>You just missed by <span>${countNext}</span> days, the next palindrome date is <span>${nextDate.day}-${nextDate.month}-${nextDate.year}</span> 
+      </li><br>
+      <li>Also, The Previous palindrome date is <span>${prevDate.day}-${prevDate.month}-${prevDate.year}</span>, you just missed by <span>${countPrev}</span> days.</li>`
+      
     }
   }
  
