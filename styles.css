@@ -29,6 +29,8 @@ a {
   background-color: var(--primary-color);
   margin-bottom: 0.5rem;
   padding: 0.5rem;
+  border-bottom-left-radius: 9rem;
+  border-bottom-right-radius: 9rem;
 }
 .heading a {
   font-size: 2.6rem;
